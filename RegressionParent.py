@@ -177,36 +177,45 @@ class RegressionParent:
         # Get fixed parameters of regression
         fixed_coeffs = self.fixed_coeffs_reg
 
-        # Initialize coefficient list and counters
-        sel_coeffs = []
-        i = 0
+        # Initialize coefficient dictionary and counters
+      	# New lists added that contain regressor names (which will automate lr_mat) and regression_coeffs (will automate lg_coeffs)
+        sel_coeffs = {};
+      	regressor_name = [];
+      	regression_coeffs = [];
+        i = 0; count = 0;
 
         # futuretodo: maybe as a separate function when used in a different context as well
         # Put selected coefficients in list that is used for the regression
+
         for key, value in self.which_vars.items():
+          	count = count+1;
             if value:
-                sel_coeffs.append(coeffs[i])
+                sel_coeffs[key] = coeffs[i]
                 i += 1
+
+                if (key not in ['omikron_o','omikron_1','lambda_1','lambda_2']):
+                    regression_coeffs.append(coeffs[i])    # just save the values of regression coefficients, rather than also storing coeffs for noise and mixture model
+                    regressor_name.append(self.regressor_string[count-1]) #get names of all independent variables
             else:
-                sel_coeffs.append(fixed_coeffs[key])
+                sel_coeffs[key] = fixed_coeffs[key]
 
         # Linear regression component
         # ---------------------------
 
-        # Todo: this needs to be tailored to each project
-        lr_mat = df[['int', 'delta_t']].to_numpy()
+        # Todo: this needs to be tailored to each project: DONE!
+        lr_mat = df[regressor_name].to_numpy()
         # lr_mat = lr_mat.to_numpy()
 
-        # Todo: this needs to be tailored to each project as well
+        # Todo: this needs to be tailored to each project as well: DONE!
         # Linear regression parameters
-        lg_coeffs = sel_coeffs[0:2]
+        lg_coeffs = regression_coeffs;
 
         # Compute predicted update
         upsilon_t_hat = np.sum(lr_mat * lg_coeffs, 1)
 
-        # Todo: this as well
+        # Todo: this as well: DONE!
         # Compute standard deviation of update distribution
-        up_noise = sel_coeffs[2] + sel_coeffs[3] * abs(upsilon_t_hat)
+        up_noise = sel_coeffs['omikron_o'] + sel_coeffs['omikron_1'] * abs(upsilon_t_hat)
 
         # Convert std of update distribution to radians and kappa
         up_noise_radians = np.deg2rad(up_noise)
