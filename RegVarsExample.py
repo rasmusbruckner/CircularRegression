@@ -59,7 +59,6 @@ class RegVars:
         # Other attributes
         self.n_subj = np.nan  # number of subjects
         self.n_ker = 4  # number of kernels for estimation
-        self.which_exp = 1  # 1 = Experiment 1, 2 = Experiment 2 # todo: kann weg
         self.show_ind_prog = True  # Update progress bar for each subject (True, False)
         self.rand_sp = True  # 0 = fixed starting points, 1 = random starting points
-        self.n_sp = 5  #  number of starting points (if rand_sp = 1)
+        self.n_sp = 5  # number of starting points (if rand_sp = 1)

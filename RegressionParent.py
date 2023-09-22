@@ -33,7 +33,6 @@ class RegressionParent:
         # Extract other attributes
         self.n_subj = reg_vars.n_subj
         self.n_ker = reg_vars.n_ker
-        self.which_exp = reg_vars.which_exp
         self.show_ind_prog = reg_vars.show_ind_prog
         self.rand_sp = reg_vars.rand_sp
         self.n_sp = reg_vars.n_sp
@@ -202,8 +201,9 @@ class RegressionParent:
         # Compute predicted update
         a_t_hat = np.sum(lr_mat * update_regressors, 1)
 
-        # Compute standard deviation of update distribution
-        up_noise = sel_coeffs['omikron_0'] + sel_coeffs['omikron_1'] * abs(a_t_hat)
+        # Compute standard deviation of update distribution:
+        # update expressed in degrees for comparability with omikron_0
+        up_noise = sel_coeffs['omikron_0'] + sel_coeffs['omikron_1'] * abs(np.rad2deg(a_t_hat))
 
         # Convert std of update distribution to radians and kappa
         up_noise_radians = np.deg2rad(up_noise)

@@ -58,7 +58,7 @@ if __name__ == '__main__':
     reg_vars.rand_sp = True  # use random starting points
 
     # Free parameters
-    reg_vars.which_vars = {reg_vars.beta_0: True,  # Intercept
+    reg_vars.which_vars = {reg_vars.beta_0: True,  # intercept
                            reg_vars.beta_1: True,  # prediction error
                            reg_vars.omikron_0: True,  # motor noise
                            reg_vars.omikron_1: False,  # learning rate noise
