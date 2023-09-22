@@ -33,7 +33,6 @@ class RegressionParent:
         # Extract other attributes
         self.n_subj = reg_vars.n_subj
         self.n_ker = reg_vars.n_ker
-        self.use_meancentering = reg_vars.use_meancentering
         self.which_exp = reg_vars.which_exp
         self.show_ind_prog = reg_vars.show_ind_prog
         self.rand_sp = reg_vars.rand_sp
@@ -123,7 +122,7 @@ class RegressionParent:
         min_x = np.nan
 
         # Cycle over starting points
-        for r in range(0, self.n_sp):
+        for _ in range(0, self.n_sp):
 
             # Get project-specific starting points for child class
             x0 = self.get_starting_point()
@@ -178,44 +177,32 @@ class RegressionParent:
         fixed_coeffs = self.fixed_coeffs_reg
 
         # Initialize coefficient dictionary and counters
-      	# New lists added that contain regressor names (which will automate lr_mat) and regression_coeffs (will automate lg_coeffs)
-        sel_coeffs = {};
-      	regressor_name = [];
-      	regression_coeffs = [];
-        i = 0; count = 0;
+        sel_coeffs = dict()  # initialize list with regressor names
+        i = 0  # initialize counter
 
         # futuretodo: maybe as a separate function when used in a different context as well
         # Put selected coefficients in list that is used for the regression
-
         for key, value in self.which_vars.items():
-          	count = count+1;
             if value:
                 sel_coeffs[key] = coeffs[i]
                 i += 1
-
-                if (key not in ['omikron_o','omikron_1','lambda_1','lambda_2']):
-                    regression_coeffs.append(coeffs[i])    # just save the values of regression coefficients, rather than also storing coeffs for noise and mixture model
-                    regressor_name.append(self.regressor_string[count-1]) #get names of all independent variables
             else:
                 sel_coeffs[key] = fixed_coeffs[key]
 
         # Linear regression component
         # ---------------------------
 
-        # Todo: this needs to be tailored to each project: DONE!
-        lr_mat = df[regressor_name].to_numpy()
-        # lr_mat = lr_mat.to_numpy()
+        # Create linear regression matrix
+        lr_mat = df[self.update_regressors].to_numpy()
 
-        # Todo: this needs to be tailored to each project as well: DONE!
         # Linear regression parameters
-        lg_coeffs = regression_coeffs;
+        update_regressors = [value for key, value in sel_coeffs.items() if key not in ['omikron_0', 'omikron_1']]
 
         # Compute predicted update
-        upsilon_t_hat = np.sum(lr_mat * lg_coeffs, 1)
+        a_t_hat = np.sum(lr_mat * update_regressors, 1)
 
-        # Todo: this as well: DONE!
         # Compute standard deviation of update distribution
-        up_noise = sel_coeffs['omikron_o'] + sel_coeffs['omikron_1'] * abs(upsilon_t_hat)
+        up_noise = sel_coeffs['omikron_0'] + sel_coeffs['omikron_1'] * abs(a_t_hat)
 
         # Convert std of update distribution to radians and kappa
         up_noise_radians = np.deg2rad(up_noise)
@@ -223,17 +210,17 @@ class RegressionParent:
         kappa_up = 1 / up_var_radians
 
         # Compute probability density of update
-        p_upsilon_t = vonmises.pdf(df['upsilon_t'], loc=upsilon_t_hat, kappa=kappa_up)
-        p_upsilon_t[p_upsilon_t == 0] = corrected_0_p  # adjust zeros to small value for numerical stability
+        p_a_t = vonmises.pdf(df['a_t'], loc=a_t_hat, kappa=kappa_up)
+        p_a_t[p_a_t == 0] = corrected_0_p  # adjust zeros to small value for numerical stability
 
         # Check for inf and nan
-        if sum(np.isinf(p_upsilon_t)) > 0:
-            sys.exit("p_upsilon_t contains infs")
-        elif sum(np.isnan(p_upsilon_t)) > 0:
-            sys.exit("p_upsilon_t contains nans")
+        if sum(np.isinf(p_a_t)) > 0:
+            sys.exit("p_a_t contains infs")
+        elif sum(np.isnan(p_a_t)) > 0:
+            sys.exit("p_a_t contains nans")
 
         # Compute log likelihood of linear regression
-        llh_reg = np.log(p_upsilon_t)
+        llh_reg = np.log(p_a_t)
 
         # Check for inf and nan
         if sum(np.isinf(llh_reg)) > 0:
