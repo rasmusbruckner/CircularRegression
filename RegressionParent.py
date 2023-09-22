@@ -38,6 +38,7 @@ class RegressionParent:
         self.rand_sp = reg_vars.rand_sp
         self.n_sp = reg_vars.n_sp
         self.bnds = reg_vars.bnds
+        self.which_update_regressors = reg_vars.which_update_regressors
 
     def parallel_estimation(self, df, prior_columns):
         """ This function manages the parallel estimation of the regression models
@@ -193,7 +194,7 @@ class RegressionParent:
         # ---------------------------
 
         # Create linear regression matrix
-        lr_mat = df[self.update_regressors].to_numpy()
+        lr_mat = df[self.which_update_regressors].to_numpy()
 
         # Linear regression parameters
         update_regressors = [value for key, value in sel_coeffs.items() if key not in ['omikron_0', 'omikron_1']]

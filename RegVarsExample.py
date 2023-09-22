@@ -19,6 +19,9 @@ class RegVars:
         self.omikron_0 = 'omikron_0'  # noise intercept
         self.omikron_1 = 'omikron_1'  # noise slope
 
+        # Variable names of update regressors (independent of noise terms)
+        self.which_update_regressors = ['int', 'delta_t']
+
         # Select staring points (used if rand_sp = False)
         self.beta_0_x0 = 0
         self.beta_1_x0 = 0

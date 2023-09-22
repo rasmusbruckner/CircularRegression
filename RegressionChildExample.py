@@ -49,9 +49,6 @@ class RegressionChildExample(RegressionParent):
         # Extract fixed parameter values
         self.fixed_coeffs_reg = reg_vars.fixed_coeffs_reg
 
-        # Update regressors (coefficients unrelated to error terms)
-        self.update_regressors = ['int', 'delta_t']
-
     @staticmethod
     def get_datamat(df):
         """ This function creates the explanatory matrix
