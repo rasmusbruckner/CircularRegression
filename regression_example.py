@@ -15,7 +15,6 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import matplotlib.gridspec as gridspec
     import seaborn as sns
-    import os
     from RegVarsExample import RegVars
     from RegressionChildExample import RegressionChildExample
 
