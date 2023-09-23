@@ -1,6 +1,5 @@
 """ This class is an example of the regression variables class for a circular regression analysis """
 
-
 import numpy as np
 
 
@@ -31,7 +30,6 @@ class RegVars:
         # Select range of random starting point values
         self.beta_0_x0_range = (-10, 10)
         self.beta_1_x0_range = (0, 1)
-
         self.omikron_0_x0_range = (5, 50)
         self.omikron_1_x0_range = (0, 1)
 
@@ -42,7 +40,7 @@ class RegVars:
         self.omikron_1_bnds = (0.001, 1)
 
         self.bnds = [self.beta_0_bnds, self.beta_1_bnds,
-                self.omikron_0_bnds, self.omikron_1_bnds]
+                     self.omikron_0_bnds, self.omikron_1_bnds]
 
         # Free parameters
         self.which_vars = {self.beta_0: True,

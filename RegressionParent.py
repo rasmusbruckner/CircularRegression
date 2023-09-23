@@ -234,15 +234,15 @@ class RegressionParent:
 
         return llh_sum
 
-    def get_datamat(self, df_subj_input):
-        """ This function raises an error is the get_datamat function is undefined in the
+    @staticmethod
+    def get_datamat(df_subj_input):
+        """ This function raises an error if the get_datamat function is undefined in the
             project-specific regression.
         """
         raise NotImplementedError("Subclass needs to define this.")
 
     def get_starting_point(self):
-        """ This function raises an error is the get_starting-point function is undefined in the
+        """ This function raises an error if the get_starting-point function is undefined in the
         project-specific regression.
         """
         raise NotImplementedError("Subclass needs to define this.")
-
